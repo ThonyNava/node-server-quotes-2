@@ -45,7 +45,7 @@ app.post("/quotes", (request, response) => {
   response.send(jsonQuotes);
 });
 
-app.post("/quotes/:quoteid", (request, response) => {
+app.delete("/quotes/:quoteid", (request, response) => {
   // Read all quotes from Jason
   let rawQuotes = fs.readFileSync("./quotes.json");
 
@@ -54,14 +54,17 @@ app.post("/quotes/:quoteid", (request, response) => {
 
   // Filter the one that should be deleted
   const id = parseInt(request.params.quoteid);
-  const newJsonQuotes = jsonQuotes.filter((quote) => {
-    return quote.id !== id;
+  const QuoteToDelete = jsonQuotes.find((quote) => {
+    return quote.id == id;
   });
+  const indexOfQuoteToDelete = jsonQuotes.indexOf(QuoteToDelete);
+  jsonQuotes.splice(indexOfQuoteToDelete, 1);
+  //   response.send(QuoteToDelete);
 
   // Save the quotes to the Jason
-  let newQuotesJason = JSON.stringify(newJsonQuotes);
+  let newQuotesJason = JSON.stringify(jsonQuotes);
   fs.writeFileSync("./quotes.json", newQuotesJason);
-  response.send(newJsonQuotes);
+  response.send(jsonQuotes);
 });
 
 app.listen(port, function (err) {
